@@ -165,10 +165,11 @@ app.post("/api/debate", async (req, res) => {
   const ids = Array.isArray(req.body?.participants) ? [...new Set(req.body.participants)] : [];
   if (!question || question.length > 2000) return res.status(400).json({ error: "질문은 1~2000자로 입력해 주세요." });
   if (!ids.length || ids.length > 5 || ids.some(id => !PROVIDERS[id])) return res.status(400).json({ error: "참가 AI를 1~5개 선택해 주세요." });
+  const rounds = req.body?.rounds === 2 ? 2 : 3;
   if (!DEMO_MODE && !isConfigured("gpt")) return res.status(400).json({ error: "최종 심판에 사용할 GPT API 설정이 필요합니다." });
 
   const transcript = [];
-  for (let round = 1; round <= 3; round++) {
+  for (let round = 1; round <= rounds; round++) {
     const previous = transcript.filter(item => item.round === round - 1);
     const results = await Promise.all(ids.map(id => runOne(id, round, question, previous)));
     transcript.push(...results);
