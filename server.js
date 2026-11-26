@@ -68,7 +68,18 @@ async function callProvider(id, system, prompt) {
   const messages = [{ role: "system", content: system }, { role: "user", content: prompt }];
 
   if (id === "gpt") {
-    return requestOpenAICompatible({ baseUrl: "https://api.openai.com/v1", key, model, messages, provider: name });
+    // OpenAI recommends the Responses API for new projects.
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ model, instructions: system, input: prompt, max_output_tokens: 900, store: false }),
+      signal: AbortSignal.timeout(90000)
+    });
+    const data = await readJson(response);
+    const output = data.output_text || (data.output || []).flatMap(item => item.content || [])
+      .filter(part => part.type === "output_text").map(part => part.text).join("\\n");
+    if (!output.trim()) throw new Error("GPT returned an empty response");
+    return output.trim();
   }
   if (id === "perplexity") {
     return requestOpenAICompatible({ baseUrl: "https://api.perplexity.ai", key, model, messages, provider: name });
