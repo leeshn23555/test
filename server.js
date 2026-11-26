@@ -196,7 +196,7 @@ app.post("/api/debate", async (req, res) => {
   res.json({ mode: DEMO_MODE ? "demo" : "live", transcript, judge });
 });
 
-app.get("*", (req, res, next) => {
+app.use((req, res, next) => {
   if (req.path.startsWith("/api/")) return res.status(404).json({ error: "API endpoint not found" });
   res.sendFile(path.join(root, "index.html"), error => error && next(error));
 });
