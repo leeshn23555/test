@@ -49,7 +49,7 @@ Model IDs are placeholders by design; provider model availability changes. The G
 - Live requests send the question and relevant prior-round text to the selected providers.
 - This prototype does not yet include web search citations, streaming, rate limiting, multi-user accounts, or production monitoring.
 - Gemini currently uses the REST `generateContent` compatibility endpoint; Google's newer Interactions API is the recommended interface for new projects, so this adapter may need migration.
-- xAI uses its Responses API. OpenAI and Perplexity use Chat Completions-style endpoints; check current provider docs before changing models or request options.
+- xAI uses its Responses API. OpenAI uses the Responses API; Perplexity uses its Chat Completions endpoint. Check current provider docs before changing models or request options.
 
 ## Official API references
 
